@@ -1,0 +1,165 @@
+---
+title: "Brief R introduction for the Marston lab"
+output:
+  html_document:
+    df_print: paged
+---
+
+## Why we use R
+### Pros
+* The code is reproducible and can be made automated
+* Can easily revert to previous versions if you change your mind when you use version control
+* In R notebooks, you can keep your notes, code and output in one place and saves it as pdf or html
+* It can do way more than Excel (advanced plots and stats) and you don't make copying mistakes
+* Solutions for your problems may already exists (Bioconductor)
+* More flexible than designated stat programs like Graph Pad
+
+### Cons
+* Requires data input in specific format (but this is good, as it forces you to keep data tidy)
+* You need to learn a programming language
+* Mistakes in the code are frustrating and take time to resolve
+
+## Required
+* R. Download from [link](https://cran.r-project.org/). Let it install developer tools, it will need them for running Bioconductor packages
+* R Studio. Download from [link](https://www.rstudio.com/products/rstudio/)
+* R Notebook. In R Studio go to File -> New file -> R Notebook, then follow the instructions
+* _Recommended:_ Create account on [GitHub](https://github.com/) for version control, sharing your code and data. Instructions on how to configure it are [here](https://jennybc.github.io/2014-05-12-ubc/ubc-r/session03_git.html)
+
+## Resources
+__The base R__ 
+
+_This is not my preferred way to use R but sometimes there is no way around_
+
+* [Swirl](https://swirlstats.com/) interactive course to learn R basics. 
+* [List of basic R commands](https://cran.r-project.org/doc/contrib/Short-refcard.pdf)
+* [Basic R textbook](https://cran.r-project.org/doc/contrib/Paradis-rdebuts_en.pdf)
+
+__R with tidyverse__
+
+_Much easier, much cleaner code, much more approachable for a beginner_
+
+The packages that you are most likely to use:
+
+* dplyr for data cleanup
+* stringr for merging/dividing columns based on the pattern
+* tidyr to reshape data
+* ggplot2 to plot data
+
+Useful links
+
+* [Tidyverse textbook](https://r4ds.had.co.nz/introduction.html)
+* [Cheatsheets](https://www.rstudio.com/resources/cheatsheets/) 
+* [GGplot cookbook](http://www.cookbook-r.com/Graphs/) how to plot data with many examples
+
+__Other useful stuff__
+
+* [R bloggers](https://www.r-bloggers.com/) 
+* [R Companion](https://rcompanion.org/rcompanion/a_02.html) how do biostatistic with R
+* [Advanced textbook](https://adv-r.hadley.nz/index.html) if you use the DEP package, take a look on the S4 section
+* [R Studio youtube channel](https://www.youtube.com/channel/UC3xfbCMLCw1Hh4dWop3XtHg) tutorials and data science seminars
+* [link](https://stackoverflow.com/) one stop place if you have any problems with code. I usually use Google to navigate through the forums
+
+## Recommended Packages
+* [DEP (Bioconductor)]("https://bioconductor.org/packages/release/bioc/vignettes/DEP/inst/doc/DEP.html") -- LFQ MS analysis
+* [tidyverse]("https://www.tidyverse.org/") 
+* [ggpubr]("http://sthda.com/english/articles/24-ggpubr-publication-ready-plots/") -- nicer plots, easier to add stats
+* [RColorBrewer]("https://www.datanovia.com/en/blog/the-a-z-of-rcolorbrewer-palette/") -- nicer colors for the plots
+* [pwr]("https://cran.r-project.org/web/packages/pwr/pwr.pdf") -- power analysis
+* [Boomer]("https://rdrr.io/cran/boomer/") -- shows intermediate steps of a function while debugging
+
+Also, as you progress, the code will have loads of parentheses. To make parentheses counting (and your life) easier, make them colorful (in R Studio -> Code -> Rainbow Parentheses).
+
+## Data reproducibility
+Basically, how to make sure that the code is readable to another human (you in a year count as another human as well) and that it will produce the same output every time someone runs it.
+
+Few tips:
+
+* object names are important
+  * the name should be a compromise between keeping it short and being descriptive
+  * use only digits (not as a first character!), letters, . and _
+  * do not reuse names--there can be only one object with a name so you will overwrite it
+  * however, *sometimes* the object doesn't get overwritten (I don't know why and it is annoying), so if you have a good reason to overwrite it, remove it first
+* if you use sampling, Monte Carlo simulation etc. you need to set.seed()
+* use R Notebooks or R Markdown 
+* Use version control (Git)
+  
+### R markdown
+If you have this file opened in R Studio, then congrats, you are already using R Markdown
+
+  * knit the document to pdf/html after you have finished. This will automatically execute **all** of your chunks. If you don't want a chunk to run, set {r, eval=FALSE} or put #s if you just want to exclude parts of a chunk
+  * this is easier if you use one chunk per task, e.g. cleaning a table, defining a function or plotting a few plots of a certain type.
+  * saving R Notebook creates an HTML file. However, it only saves the output where you run the chunks, so some parts may be missing. Ergo, the next person will likely get different answers than you. **KNIT IT INSTEAD**
+  * comment the code and keep your notes **with** the code
+
+### Setting up Git
+1. create an account on GitHub
+2. [download Git]("http://git-scm.com/downloads") and install as default
+3. In R studio go to Tools -> Global Options -> Git/SVN. Set Git executable (git.exe, it is in the bin folder)
+4. create a depository on GitHub from a browser. Copy link to the depository
+5. in R Studio, go to File -> New Project -> version control. Paste the link you copied.
+6. New R Studio session will open and you are set to go!
+
+#### How to save code to GitHub
+1. Create R Notebook/R in the Git project folder
+2. Write your code.
+3. When you finish a subsection (or after you finished amending previous version), knit the document
+4. In upper right window, go to Git. Put check marks next to relevant files to "stage" them
+5. Press commit, new window with differences from a previous version will open
+6. Write the commit message. It needs to be concise but descriptive (e.g. "fixed my_favourite_function" function bug"). Press commit
+7. You need to push the changes and voila!
+
+#### Why you need version control even when you are a noob
+* develops habit for the future when you are a pro
+* you may want to share the code with a friend (or to taunt your opponent)
+* you may want to share the code with yourself on a different computer
+* can easily revert changes after unsuccessful adventures in coding
+* keeps in check multiple versions of a project
+
+## The basics
+
+### Paths
+This chunk of code (aka, the piece of code that appears in a single gray box) is necessary to tell R Studio where to look for files and where to save the output. This chunk will not show in the html file (to protect your privacy) if you set include=FALSE and echo=FALSE 
+
+Windows users: Windows uses \\ to specify path. If your path is long, you may want to ctrl+f and replace all for the / 
+```{r setup, include=TRUE, echo=TRUE, eval=FALSE}
+require("knitr")
+opts_knit$set(root.dir = "C:/Users/Me/My_path")
+```
+
+An alternative is to specify the path by setwd(), but it will only work in the chunk and then revert to default
+```{r, eval=FALSE}
+setwd("C:/Users/Me/My_path")
+getwd() #this how you can check the path
+```
+
+### Install and load packages
+```{r, eval=FALSE}
+#Install basic packages (from CRAN)
+install.packages("tidyverse") 
+
+#load package
+library(tidyverse)
+
+#more elegant solution:installs the package only if it isn't previously installed and automatically loads it
+if(!require(tidyverse)){
+    install.packages("tidyverse")
+    library(tidyverse)
+}
+
+#Install packages from Bioconductor
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("DEP")
+
+```
+
+### Creating and removing objects
+```{r}
+test <- 1     #how you create an object (appears on the right)
+test + 1      #can perform maths with the object
+rm(test)      #remove a specific object
+rm(list=ls()) #remove all object
+?rm           #shows the function help file in the right lower corner
+```
+
+

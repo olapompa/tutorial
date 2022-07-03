@@ -1,0 +1,114 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+```{r setup, include=FALSE, echo=FALSE}
+require("knitr")
+opts_knit$set(root.dir = "C:/Users/byncb/Desktop/programming/R/Tutorial")
+```
+
+```{r}
+#installs (if necessary) tidyverse package and loads it
+if(!require(tidyverse)){
+    install.packages("tidyverse")
+    library(tidyverse)
+}
+```
+
+# This is a header. Creates outline
+
+```{r}
+val1 <- 1
+val2 <- 3
+#1val <- 1 #gives error: cannot start name with a digit
+A1 <-1
+#a1 #error, case sensitive
+val1+val2
+test <- read.csv("test.csv")
+write.csv(test, "test2.csv")
+```
+
+```{r}
+iris <- iris
+iris
+head(iris, 10)
+tail(iris)
+iris$Sepal.Length <- as.character(iris$Sepal.Length)
+rm(iris)
+iris <- iris
+head(iris)
+summary(iris)
+dim(iris)
+names(iris)
+iris[3,]
+iris[,3]
+is.data.frame(iris)
+vect <- c(1,2,3) #number
+is.data.frame(vect)
+vect2 <- c("1","1","2") #character
+fruits <- c("apple", "orange", "strawberry")
+mat <- rbind(fruits,vect)
+is.matrix(mat)
+my_df <- rbind.data.frame(fruits,vect)
+cbind.data.frame(fruits, vect)
+```
+
+```{r}
+#dplyr
+head(iris)
+iris_filt <- iris %>% 
+  filter(Species=="virginica") %>% 
+  select(Species, starts_with("Petal")) %>% 
+  filter(Petal.Length > 5.5) %>% 
+  mutate(Petal.Area = Petal.Length*Petal.Width)
+iris_filt
+
+iris_grouped <- iris %>% 
+  group_by(Species) %>% 
+  summarise(
+    number_of_plants = n(),
+    average_petal_length=mean(Petal.Length),
+    median_petal_length=median(Petal.Length),
+    q1 = quantile(Petal.Length, 0.25),
+    q3 = quantile(Petal.Length, 0.75),
+    max_length = max(Petal.Length),
+    min_length = min(Petal.Length),
+    stand_dev_petal_length=sd(Petal.Length),
+    max_length_inch = max(Petal.Length)/2.54
+  
+  )
+```
+
+```{r}
+#ggplot2
+#histogram
+ggplot(iris, aes(x=Petal.Length, fill=Species)) +
+# geom_histogram(bins = 10) gives 10 bins
+  geom_histogram(.binwidth = 0.5) + #bins every 0.5 of a unit
+#creates  
+  facet_wrap(~Species)
+
+#scatter plot
+ggplot(iris, aes(x=Petal.Length, y=Petal.Width, color=Species))+
+  geom_point()
+
+#Boxplot
+#shows median, q1, q3, min, max and outliers
+ggplot(iris, aes(y=Petal.Length, x=Species))+
+  geom_boxplot()
+
+#Bar chart
+#Shows average. I usually put already aggregated value (from grouped_by table) 
+ggplot(iris_grouped, aes(y=average_petal_length, x=Species, fill=Species))+
+  geom_bar(stat="identity")+
+  geom_errorbar(aes(ymin=average_petal_length-stand_dev_petal_length, ymax=average_petal_length+stand_dev_petal_length),
+                  width=.2,                     # Width of the error bars
+                  position=position_dodge(.9))+ # position of error bars
+  ggtitle("Iris" ) + #Insert title
+  theme(plot.title = element_text(hjust = 0.5)) #Center the title
+```
+

@@ -1674,7 +1674,7 @@ packages</li>
 <li>R Notebook. In R Studio go to File -&gt; New file -&gt; R Notebook,
 then follow the instructions</li>
 <li><em>Recommended:</em> Create account on <a href="https://github.com/">GitHub</a> for version control, sharing your
-code and data. Instructions on how to configure it are <a href="https://jennybc.github.io/2014-05-12-ubc/ubc-r/session03_git.html">here</a></li>
+code and data. Instructions on how to configure it are <a href="#git">below</a>.</li>
 </ul>
 </div>
 <div id="resources" class="section level2">
@@ -1717,9 +1717,9 @@ Companion</a> how do biostatistic with R</li>
 if you use the DEP package, take a look on the S4 section</li>
 <li><a href="https://www.youtube.com/channel/UC3xfbCMLCw1Hh4dWop3XtHg">R
 Studio youtube channel</a> tutorials and data science seminars</li>
-<li><a href="https://stackoverflow.com/">link</a> one stop place if you
-have any problems with code. I usually use Google to navigate through
-the forums</li>
+<li><a href="https://stackoverflow.com/">StackOverflow</a> one stop
+place if you have any problems with code. I usually use Google to
+navigate through the forums</li>
 </ul>
 </div>
 <div id="recommended-packages" class="section level2">
@@ -1783,20 +1783,26 @@ INSTEAD</strong></li>
 code</li>
 </ul>
 </div>
-<div id="setting-up-git" class="section level3">
+<div id="git" class="section level3">
 <h3>Setting up Git</h3>
+<div id="this-instruction-does-not-involve-using-bash" class="section level4">
+<h4>This instruction does not involve using bash</h4>
 <ol style="list-style-type: decimal">
-<li>create an account on GitHub</li>
+<li>create an account on <a href="%22https://github.com/%22">GitHub</a></li>
 <li><a href="%22http://git-scm.com/downloads%22">download Git</a> and
 install as default</li>
 <li>In R studio go to Tools -&gt; Global Options -&gt; Git/SVN. Set Git
-executable (git.exe, it is in the bin folder)</li>
+executable (git.exe, it is in the bin folder). In the same window,
+create SSH code and copy it.</li>
+<li>In a browser, go to your GitHub settings (upper right corner), then
+“SSH and GPG keys” and “new key”. Paste the copied key.</li>
 <li>create a depository on GitHub from a browser. Copy link to the
 depository</li>
 <li>in R Studio, go to File -&gt; New Project -&gt; version control.
 Paste the link you copied.</li>
 <li>New R Studio session will open and you are set to go!</li>
 </ol>
+</div>
 <div id="how-to-save-code-to-github" class="section level4">
 <h4>How to save code to GitHub</h4>
 <ol style="list-style-type: decimal">
@@ -1809,7 +1815,7 @@ files to “stage” them</li>
 <li>Press commit, new window with differences from a previous version
 will open</li>
 <li>Write the commit message. It needs to be concise but descriptive
-(e.g. “fixed my_favourite_function” function bug”). Press commit</li>
+(e.g. “fixed my_favourite_function function bug”). Press commit</li>
 <li>You need to push the changes and voila!</li>
 </ol>
 </div>
@@ -1871,7 +1877,7 @@ test + 1      #can perform maths with the object</code></pre>
 <pre><code>## [1] 2</code></pre>
 <pre class="r"><code>rm(test)      #remove a specific object
 rm(list=ls()) #remove all object
-?rm           #shows the function help file in the right lower corner</code></pre>
+?rm           #shows the function help file in the lower right corner</code></pre>
 <pre><code>## starting httpd help server ... done</code></pre>
 </div>
 </div>

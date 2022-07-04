@@ -1,0 +1,145 @@
+---
+title: "Creating dataset for part 3"
+output:
+  html_document:
+    df_print: paged
+---
+```{r setup, include=FALSE, echo=FALSE}
+require("knitr")
+opts_knit$set(root.dir = "C:/Users/byncb/Desktop/programming/R/tutorial/3_joins_NAs")
+```
+
+```{r}
+library(tidyverse)
+```
+
+
+### Draw 100 random proteins names and add some without names
+```{r}
+ORFs <- read.csv("all_yeast_ORFs.csv", na.strings = c("NA", "NaN","")) 
+head(ORFs)
+
+set.seed(42)
+sliced <- ORFs %>% 
+  select(Protein.IDs, Gene.names) %>% 
+  slice_sample(n=100) 
+
+sliced %>% 
+  filter(is.na(Gene.names)) %>% 
+  count()
+#no NAs there
+
+ORFs %>% 
+  filter(is.na(Gene.names)) %>% 
+  count()
+#only 2 here, so I will add a couple more manually
+
+ORFs_NA <- ORFs %>% 
+  select(Protein.IDs, Gene.names) %>% 
+  filter(is.na(Gene.names))
+
+#pick new protein ids
+Protein.IDs <- c("YBR209W","YDR053W","YBR225W", "YHR048W")
+Gene.names  <- rep(NA, 4)
+
+#bind everything together
+protein_set <- rbind.data.frame(sliced, ORFs_NA, cbind(Protein.IDs, Gene.names))
+
+#randomise the order
+set.seed(42)
+protein_set <- protein_set[sample(1:nrow(protein_set)), ]
+
+#split into significant and not significant
+protein_head <- head(protein_set, 27)
+protein_tail <- tail(protein_set, nrow(protein_set)-27)
+```
+
+### Make up intensities at random
+```{r}
+#there is definitely a better way to do it but I used all my genius for purrr below
+#The numbers are key-smash but checked that the online calculator showed plausible curve
+
+set.seed(42)
+intensity_A1 <- round(rnorm(nrow(protein_set), 1294638, 740364))
+set.seed(42)
+intensity_A2 <- round(rnorm(nrow(protein_set), 1294638, 740364))
+set.seed(42)
+intensity_A3 <- round(rnorm(nrow(protein_set), 1294638, 740364))
+notag <- cbind.data.frame(intensity_A1,intensity_A2,intensity_A3)
+
+set.seed(42)
+intensity_B1_tail <- round(rnorm(nrow(protein_tail), 1294638, 740364))
+set.seed(42)
+intensity_B2_tail <- round(rnorm(nrow(protein_tail), 1294638, 740364))
+set.seed(42)
+intensity_B3_tail <- round(rnorm(nrow(protein_tail), 1294638, 740364))
+wt_tail <- cbind.data.frame(intensity_B1_tail,intensity_B2_tail,intensity_B3_tail)
+
+set.seed(42)
+intensity_B1_head <- round(rnorm(nrow(protein_head), 24739463, 9727394))
+set.seed(42)
+intensity_B2_head <- round(rnorm(nrow(protein_head), 24739463, 9727394))
+set.seed(42)
+intensity_B3_head <- round(rnorm(nrow(protein_head), 24739463, 9727394))
+wt_head <- cbind.data.frame(intensity_B1_head,intensity_B2_head,intensity_B3_head)
+
+names(wt_head) <- gsub("_head","",names(wt_head))
+names(wt_tail) <- gsub("_tail","",names(wt_head))
+
+wt <- rbind.data.frame(wt_head, wt_tail)
+
+df_intensities <- cbind.data.frame(protein_set,notag,wt)
+
+```
+
+```{r, include=FALSE, echo=FALSE, eval=FALSE}
+###This is where I play with purr, disregard
+
+#baby's first purr function <3
+df_intensities %>% 
+map(., ~ if(!is.numeric(.x)) paste0(.x) 
+       else .+0.55)%>% 
+  as.data.frame()
+
+#this is not how this was designed to work
+#warning: NAs introduced by coercion
+#honey, that's exactly what I wanted
+int_with_NAs <- df_intensities %>% 
+map(., ~ if_else(.x>300000, paste0(.x), "NA", paste0(.x))) %>% 
+  as.data.frame() %>% 
+#ok, it turned out it was removing the NAs in the character columns, so 
+  na_if(., "NA") %>% 
+  mutate(across(starts_with("intensity"), as.numeric)) %>% 
+  select(-Gene.names)
+  
+#testing more abuse
+df_intensities %>% 
+map(., ~ if_else(.x>=300000, paste0(.x), paste0(as.numeric(.x)+0.5), paste0(.x))) %>% 
+  #paste0(as.numeric(.x)+0.5) is a character vector, yep
+  as.data.frame() %>% 
+  na_if(., "NA") %>% 
+  mutate(across(starts_with("intensity"), as.numeric)) %>% 
+  #it started screaming about NAs introduced by coercion so count if there are any
+  map(., ~ sum(is.na(.))) 
+#NAs not found in the numerical columns
+
+```
+### Replace values below the cutoff with NA
+```{r}
+int_with_NAs <- df_intensities %>% 
+  #if_else has 3 outcomes: T, F, missing. Missing in this case is a wrong data class
+  #unfortunately, they all need to be a character vector, so I need a walkaround
+map(., ~ if_else(.x>300000, paste0(.x), "NA", paste0(.x))) %>% 
+  as.data.frame() %>% 
+  #this is only necessary, as apparently NAs count as false and they were replaced in the Gene.names
+  na_if(., "NA") %>% 
+  #coerce intensities from char to dbl
+  mutate(across(starts_with("intensity"), as.numeric)) %>% 
+  select(!Gene.names)
+
+#I didn't have to worry about the repaced NAs as I unselected the column anyway...
+
+#save the final table
+write.csv(int_with_NAs, "mock_proteomics.csv")
+```
+
